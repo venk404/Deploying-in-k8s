@@ -1,0 +1,11 @@
+server:
+  nodeSelector:
+    type: dependent_services
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "dependent_services"
+      effect: "NoSchedule"
+
+injector:
+  enabled: false 
