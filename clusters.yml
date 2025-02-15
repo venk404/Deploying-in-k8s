@@ -11,3 +11,6 @@ nodes:
     - hostPath: C:\kind\data\postgres-pv
       containerPath: /data/postgres-pv 
 - role: worker
+  extraPortMappings:
+  - containerPort: 30008
+    hostPort: 30008
