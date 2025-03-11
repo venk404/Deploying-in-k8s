@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: postgres-client-test
+  namespace: student-api # Replace with your namespace
+spec:
+  nodeSelector:
+    type: dependent_services # Selects nodes with the label "type=vault"
+  containers:
+    - name: postgres-client
+      image: postgres:latest # Use a suitable PostgreSQL image
+      command: ["/bin/bash", "-c", "--"]
+      args: ["while true; do sleep 30; done;"] # Keep the pod running
+      resources:
+        requests:
+          cpu: 100m
+          memory: 200Mi
+      securityContext:
+        runAsUser: 1000 # Important for some environments
+        runAsGroup: 1000
+  restartPolicy: Always
