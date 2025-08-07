@@ -59,30 +59,48 @@ kubectl exec vault-0 -n vault -- vault operator unseal "$VAULT_UNSEAL_KEY"
 kubectl exec -it vault-0 -n vault -- /bin/sh
 vault login
 vault secrets enable -path=secrets kv-v2
-vault kv put secrets/DBSECRETS POSTGRES_PASSWORD=pass POSTGRES_DB=postgres POSTGRES_USER=postgres
+# Update the details for creating secrets in vault
+vault kv put secrets/DBSECRETS POSTGRES_PASSWORD=<password> POSTGRES_DB=<DB> POSTGRES_USER=<user>
 ```
 
 6) ### Install External Secrets Operator:
 
 ```bash
 cd '.\External Secrets\'
-kubectl apply -f Namespace.yml
 helm repo add external-secrets https://charts.external-secrets.io
-helm install external-secrets external-secrets/external-secrets -n external-secrets --set installCRDs=true -f ExternalSecret_Value.yml
-
-# Create vault token secret
-kubectl create secret generic vault-token --namespace=external-secrets --from-literal=token=<token>
-
-# Setup secret store
-kubectl apply -f ClusterSecretStore.yml
-kubectl get clustersecretstore -A
-#You should see the status as Valid
-kubectl apply -f ExternalSecret.yml
-kubectl get externalsecrets -A
-#You should see the status as SecretSynced
+helm install external-secrets external-secrets/external-secrets -n external-secrets --create-namespace -f ExternalSecret_Value.yml
 ```
 
-7) Deploy applications:
+### Create Vault Token Secret:
+
+1. **Encode the token in base64:**
+   ```bash
+   echo -n "your-vault-token-here" | base64
+   ```
+
+2. **Update ClusterSecretStore.yml:**
+   - Open `ClusterSecretStore.yml` file
+   - Replace `<token>` with your base64-encoded token in the vault-token secret section
+
+3. **Apply the secret store:**
+   ```bash
+   kubectl apply -f ClusterSecretStore.yml
+   ```
+
+4. **Verify installation:**
+   ```bash
+   kubectl get secret vault-token -n external-secrets
+   kubectl get clustersecretstore
+   ```
+
+5. **Apply the External Secret:**
+    ```bash
+    kubectl apply -f ExternalSecret.yml
+    kubectl get externalsecrets -A
+    #You should see the status as SecretSynced
+    ```
+
+7) Deploy Postgres and Applications:
 ```bash
 cd ../DB
 
