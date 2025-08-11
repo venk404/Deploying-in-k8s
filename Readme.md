@@ -21,8 +21,8 @@ The diagram below shows the deployment outputs:
 1) ### Clone and Navigate:
 
 ```bash
-git clone https://github.com/venk404/SRE--RestAPI.git
-cd .\Assignment 7
+git clone https://github.com/venk404/Deploying-in-k8s.git
+
 ```
 
 2) ### Before installing Vault and ESO, we need to install Helm, a Kubernetes package manager that simplifies the installation process. Installation is straightforward, and you can refer to the docs for details.
