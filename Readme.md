@@ -78,9 +78,10 @@ kubectl get secret vault-token -n external-secrets
 kubectl get clustersecretstore
 kubectl get externalsecrets -A
 # You should see the status as SecretSynced
+```
 
+6) ### Deploy Postgres and Applications:
 
-6) Deploy Postgres and Applications:
 ```bash
 cd ../..
 
@@ -95,5 +96,5 @@ cd ../Application
 kubectl apply -f Application.yml
 ```
 
-6) Access the API at http://127.0.0.1:30007/docs
+7) Access the API at http://127.0.0.1:30007/docs
 
