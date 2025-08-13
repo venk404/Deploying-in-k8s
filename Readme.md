@@ -13,7 +13,6 @@ The diagram below shows the deployment outputs:
 - Docker
 - Kind
 - Kubectl
-- Helm (For installing Vault and ESO)
 - Kubernates cluster (refer to the previous assignment for details) and complete the necessary steps to proceed directly with Vault configuration.
 
 ## Installation / Quick Start
@@ -25,26 +24,19 @@ git clone https://github.com/venk404/Deploying-in-k8s.git
 
 ```
 
-2) ### Before installing Vault and ESO, we need to install Helm, a Kubernetes package manager that simplifies the installation process. Installation is straightforward, and you can refer to the docs for details.
-
-```bash
-https://helm.sh/docs/intro/install/
-```
-
 ## Vault and External Secrets Operator Setup
 
-3) ### Install Vault:
+2) ### Install Vault:
 
 ```bash
 cd Dependend_Services/Vault/
-kubectl create -f Namespace.yml
-helm repo add hashicorp https://helm.releases.hashicorp.com
-helm repo update
-helm install vault hashicorp/vault --namespace vault --values Vault_Value.yml
+
+kubectl apply -f .
+
 kubectl get pods -n vault -owide
 ```
 
-4) ### Initialize and unseal Vault:
+3) ### Initialize and unseal Vault:
 ```bash
 # Please wait for a while, as the Vault-0 pod may take some time to reach the ready state.
 kubectl exec vault-0 -n vault -- vault operator init -key-shares=1 -key-threshold=1 -format=json > cluster-keys.json
@@ -52,63 +44,56 @@ $VAULT_UNSEAL_KEY=$(cat cluster-keys.json | jq -r ".unseal_keys_b64[]")
 kubectl exec vault-0 -n vault -- vault operator unseal "$VAULT_UNSEAL_KEY"
 ```
 
-5) ### Configure Vault secrets:
+4) ### Configure Vault secrets:
 
 ```bash
 # Login to vault using root token from cluster-keys.json
 kubectl exec -it vault-0 -n vault -- /bin/sh
-vault login
+# copy the root toek from cluster-keys.json
+vault login <root_token>
 vault secrets enable -path=secrets kv-v2
 # Update the details for creating secrets in vault
 vault kv put secrets/DBSECRETS POSTGRES_PASSWORD=<password> POSTGRES_DB=<DB> POSTGRES_USER=<user>
+exit
 ```
 
-6) ### Install External Secrets Operator:
+5) ### Setting up External Secrets Operator
 
 ```bash
+cd ..
+
 cd '.\External Secrets\'
-helm repo add external-secrets https://charts.external-secrets.io
-helm install external-secrets external-secrets/external-secrets -n external-secrets --create-namespace -f ExternalSecret_Value.yml
-```
 
-### Create Vault Token Secret:
+kubectl apply -f .\namespace.yaml
 
-1. **Encode the token in base64:**
-   ```bash
-   echo -n "your-vault-token-here" | base64
-   ```
+kubectl apply --server-side -f .\crds\ 
 
-2. **Update ClusterSecretStore.yml:**
-   - Open `ClusterSecretStore.yml` file
-   - Replace `<token>` with your base64-encoded token in the vault-token secret section
+echo -n "your-vault-token-here" | base64 
 
-3. **Apply the secret store:**
-   ```bash
-   kubectl apply -f ClusterSecretStore.yml
-   ```
+# Update secret.yaml manually: replace <token> with the above base64-encoded token 
 
-4. **Verify installation:**
-   ```bash
-   kubectl get secret vault-token -n external-secrets
-   kubectl get clustersecretstore
-   ```
+kubectl apply -f . 
+kubectl get secret vault-token -n external-secrets
 
-5. **Apply the External Secret:**
-    ```bash
-    kubectl apply -f ExternalSecret.yml
-    kubectl get externalsecrets -A
-    #You should see the status as SecretSynced
-    ```
+kubectl get clustersecretstore
+kubectl get externalsecrets -A
+# You should see the status as SecretSynced
 
-7) Deploy Postgres and Applications:
+
+6) Deploy Postgres and Applications:
 ```bash
+cd ../..
+
 cd ../DB
+
+# Please wait still all the pods are ready in external-secrets ns
 
 kubectl apply -f Postgres.yml
 
 cd ../Application
+
 kubectl apply -f Application.yml
 ```
 
-8) Access the API at http://127.0.0.1:30007/docs
+6) Access the API at http://127.0.0.1:30007/docs
 
