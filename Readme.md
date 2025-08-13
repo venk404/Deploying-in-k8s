@@ -96,5 +96,5 @@ cd ../Application
 kubectl apply -f Application.yml
 ```
 
-7) Access the API at http://127.0.0.1:30007/docs
+7) ### Access the API at http://127.0.0.1:30007/docs
 
