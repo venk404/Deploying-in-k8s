@@ -31,7 +31,7 @@ spec:
         type: application
       containers:
       - name: restapi 
-        image: venkateshtangaraj/studentapi:v1.0.0 
+        image: venkateshtangaraj/studentapi:v1.0.1
         ports:
         - containerPort: 8002
         envFrom:
@@ -54,22 +54,44 @@ spec:
               name: restapi-config
               key: port
       initContainers:
-      - name: migration
-        image: venkateshtangaraj/db_migration:v1.0.0
-        envFrom:
-        - secretRef:
-            name: dev-db
-        env:
-        - name: POSTGRES_PORT
-          valueFrom:
-            configMapKeyRef:
-              name: restapi-config
-              key: postgres_port
-        - name: POSTGRES_HOST
-          valueFrom:
-            configMapKeyRef:
-              name: restapi-config
-              key: postgres_host
+        - name: migration
+          image: venkateshtangaraj/studentapi:v1.0.1
+          env:
+          - name: PYWAY_TYPE
+            value: "postgres"
+          - name: PYWAY_TABLE
+            value: "pyway_schema_history"
+          - name: PYWAY_DATABASE_MIGRATION_DIR
+            value: "/app/migrations"
+          - name: PYWAY_DATABASE_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: restapi-config
+                key: postgres_host
+          - name: PYWAY_DATABASE_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: restapi-config
+                key: postgres_port
+          - name: PYWAY_DATABASE_NAME
+            valueFrom:
+              secretKeyRef:
+                name: dev-db
+                key: POSTGRES_DB
+          - name: PYWAY_DATABASE_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: dev-db
+                key: POSTGRES_USER
+          - name: PYWAY_DATABASE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: dev-db
+                key: POSTGRES_PASSWORD
+          
+          command: ["sh", "-c"]
+          args: ["pyway migrate"]
+  
 
 ---
 apiVersion: v1
