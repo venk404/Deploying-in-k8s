@@ -6,11 +6,9 @@ nodes:
   extraPortMappings:
   - containerPort: 30007
     hostPort: 30007
+    protocol: TCP
 - role: worker
   extraMounts:
-    - hostPath: C:\kind\data\postgres-pv
+    - hostPath: D:\kind\data\postgres-pv
       containerPath: /data/postgres-pv 
 - role: worker
-  extraPortMappings:
-  - containerPort: 30008
-    hostPort: 30008
