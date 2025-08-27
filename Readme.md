@@ -21,6 +21,7 @@ The diagram below shows the deployment outputs:
 
 ```bash
 git clone https://github.com/venk404/Deploying-in-k8s.git
+cd Deploying-in-k8s/
 
 ```
 
@@ -98,3 +99,15 @@ kubectl apply -f Application.yml
 
 7) ### Access the API at http://127.0.0.1:30007/docs
 
+
+## Conclusions
+
+All the expectations have been met for **Milestone 7**:
+
+- ✅ Kubernetes manifests created for all components (application, DB, dependent services).  
+- ✅ Each component has a single manifest file containing all necessary resources (namespace, configMap, secret, deployment, service, etc.).  
+- ✅ DB DML migrations run as init container before application pod startup.  
+- ✅ Components deployed in proper namespaces and nodes.  
+- ✅ Environment variables passed via ConfigMaps, secrets injected using Kubernetes External Secrets Operator with HashiCorp Vault.  
+- ✅ REST API exposed via Kubernetes service and tested successfully (status 200).  
+- ✅ README updated with deployment instructions.  

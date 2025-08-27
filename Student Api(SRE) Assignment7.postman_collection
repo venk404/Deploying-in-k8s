@@ -21,7 +21,7 @@
 						}
 					}
 				},
-				"url": "http://0.0.0.0:8000/AddStudent"
+				"url": "http://0.0.0.0:30007/AddStudent"
 			},
 			"response": []
 		},
@@ -31,7 +31,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://0.0.0.0:8000/GetStudent/?id=33",
+					"raw": "http://0.0.0.0:30007/GetStudent/?id=33",
 					"protocol": "http",
 					"host": [
 						"0",
@@ -39,7 +39,7 @@
 						"0",
 						"0"
 					],
-					"port": "8000",
+					"port": "30007",
 					"path": [
 						"GetStudent",
 						""
@@ -59,7 +59,7 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": "http://0.0.0.0:8000/GetAllStudents"
+				"url": "http://0.0.0.0:30007/GetAllStudents"
 			},
 			"response": []
 		},
@@ -108,7 +108,7 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://0.0.0.0:8080/v2/DeleteStudent?id=",
+					"raw": "http://0.0.0.0:30007/v2/DeleteStudent?id=",
 					"protocol": "http",
 					"host": [
 						"0",
@@ -116,7 +116,7 @@
 						"0",
 						"0"
 					],
-					"port": "8080",
+					"port": "30007",
 					"path": [
 						"v2",
 						"DeleteStudent"
